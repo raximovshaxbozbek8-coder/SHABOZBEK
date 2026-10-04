@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>KinoUltra — Онлайн Кинотеатр</title>
+    <style>
+        :root {
+            --bg-color: #0f1015;
+            --card-bg: #1a1c24;
+            --accent: #e50914;
+            --accent-hover: #b20710;
+            --text-main: #ffffff;
+            --text-secondary: #9ca3af;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: rgba(15, 16, 21, 0.95);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--accent);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .search-bar input {
+            padding: 10px 20px;
+            width: 300px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .search-bar input:focus {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.1);
+            width: 350px;
+        }
+
+        .hero {
+            padding: 50px 40px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.6), var(--bg-color)), url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1600&q=80') center/cover;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .genres {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 20px 40px;
+        }
+
+        .genre-btn {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 13px;
+        }
+
+        .genre-btn:hover, .genre-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 40px;
+        }
+
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 20px;
+        }
+
+        .movie-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 25px rgba(229, 9, 20, 0.3);
+        }
+
+        .movie-poster {
+            width: 100%;
+            height: 310px;
+            object-fit: cover;
+            background-color: #111;
+        }
+
+        .movie-poster-placeholder {
+            width: 100%;
+            height: 310px;
+            background: linear-gradient(135deg, #1f2233, #0f1015);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+            color: var(--text-main);
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .movie-info {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+
+        .movie-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .movie-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .movie-rating {
+            color: #f5c518;
+            font-weight: bold;
+        }
+
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: #181922;
+            width: 750px;
+            max-width: 95%;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        }
+
+        .modal-header {
+            padding: 15px 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: white;
+        }
+
+        .modal-body {
+            padding: 22px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .modal-poster {
+            width: 180px;
+            height: 270px;
+            border-radius: 6px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .modal-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .modal-details p {
+            color: var(--text-secondary);
+            line-height: 1.4;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .watch-btn {
+            display: block;
+            margin-top: auto;
+            background: var(--accent);
+            color: white;
+            text-align: center;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: 0.2s;
+            font-size: 14px;
+        }
+
+        .watch-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        .loading-status {
+            text-align: center;
+            margin: 40px 0;
+            color: var(--text-secondary);
+            font-size: 15px;
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">KinoUltra</div>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Введите название и Enter..." onkeydown="handleSearch(event)">
+        </div>
+    </header>
+
+    <div class="hero">
+        <h1>Кинотеатр KinoUltra</h1>
+        <p>Лучшие фильмы мира в вашем распоряжении</p>
+    </div>
+
+    <div class="genres">
+        <button class="genre-btn active" onclick="changeGenre('', this)">Все</button>
+        <button class="genre-btn" onclick="changeGenre('28', this)">Боевики</button>
+        <button class="genre-btn" onclick="changeGenre('878', this)">Фантастика</button>
+        <button class="genre-btn" onclick="changeGenre('18', this)">Драмы</button>
+        <button class="genre-btn" onclick="changeGenre('35', this)">Комедии</button>
+        <button class="genre-btn" onclick="changeGenre('53', this)">Триллеры</button>
+        <button class="genre-btn" onclick="changeGenre('27', this)">Ужасы</button>
+    </div>
+
+    <div class="container">
+        <div class="movies-grid" id="moviesGrid">
+            <div class="loading-status">🔄 Загружаем каталог...</div>
+        </div>
+    </div>
+
+    <!-- Модальное окно -->
+    <div class="modal" id="movieModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Название фильма</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Динамика -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_KEY = '3fd2be6f0c70a2a598f084ddfb75487c';
+        const BASE_URL = `https://api.themoviedb.org/3`;
+        const IMG_URL = 'https://image.tmdb.org/t/p/w500';
+
+        let currentMoviesData = [];
+        let currentGenre = '';
+        let pageToLoad = 1;
+        let isLoading = false;
+        let isSearching = false;
+
+        async function loadCatalog(genre = '', page = 1) {
+            isSearching = false;
+            isLoading = true;
+            const grid = document.getElementById('moviesGrid');
+            
+            if (page === 1) {
+                grid.innerHTML = `<div class="loading-status">🔄 Загружаем каталог...</div>`;
+                currentMoviesData = [];
+            }
+
+            try {
+                let url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=ru-RU&sort_by=popularity.desc&vote_count.gte=50&page=${page}`;
+                if (genre) {
+                    url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=ru-RU&with_genres=${genre}&sort_by=popularity.desc&vote_count.gte=50&page=${page}`;
+                }
+                
+                const res = await fetch(url);
+                const data = await res.json();
+                
+                if (data.results) {
+                    const newMovies = data.results.filter(m => !currentMoviesData.some(existing => existing.id === m.id));
+                    currentMoviesData = currentMoviesData.concat(newMovies);
+                    renderMovies(currentMoviesData);
+                }
+            } catch (err) {
+                grid.innerHTML = '<p style="color: var(--text-secondary); text-align: center; grid-column: 1/-1;">Ошибка соединения с сервером.</p>';
+            }
+            isLoading = false;
+        }
+
+        async function handleSearch(event) {
+            if (event.key === 'Enter') {
+                const query = document.getElementById('searchInput').value.trim();
+                if (!query) {
+                    loadCatalog(currentGenre, 1);
+                    return;
+                }
+
+                isSearching = true;
+                const grid = document.getElementById('moviesGrid');
+                grid.innerHTML = `<div class="loading-status">🔍 Ищем "${query}"...</div>`;
+
+                try {
+                    const res = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&language=ru-RU&query=${encodeURIComponent(query)}`);
+                    const data = await res.json();
+                    
+                    if (data.results) {
+                        currentMoviesData = data.results;
+                        renderMovies(currentMoviesData);
+                    }
+                } catch (err) {
+                    grid.innerHTML = '<p style="color: var(--text-secondary); text-align: center; grid-column: 1/-1;">Ошибка при поиске.</p>';
+                }
+            }
+        }
+
+        window.addEventListener('scroll', async () => {
+            if (isSearching) return;
+            if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 500) {
+                if (!isLoading && pageToLoad < 50) {
+                    pageToLoad++;
+                    await loadCatalog(currentGenre, pageToLoad);
+                }
+            }
+        });
+
+        function renderMovies(movies) {
+            const grid = document.getElementById('moviesGrid');
+            grid.innerHTML = '';
+            
+            if (!movies || movies.length === 0) {
+                grid.innerHTML = '<p style="color: var(--text-secondary); grid-column: 1/-1; text-align: center;">Ничего не найдено</p>';
+                return;
+            }
+
+            movies.forEach((movie) => {
+                const title = movie.title || movie.name;
+                const poster = movie.poster_path ? IMG_URL + movie.poster_path : '';
+                const year = (movie.release_date || movie.first_air_date || '2024').split('-')[0];
+                const rating = movie.vote_average ? movie.vote_average.toFixed(1) : '0.0';
+
+                const posterContent = poster 
+                    ? `<img class="movie-poster" src="${poster}" alt="${title}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'movie-poster-placeholder\'><span>${title}</span></div>';">`
+                    : `<div class="movie-poster-placeholder"><span>${title}</span></div>`;
+
+                grid.innerHTML += `
+                    <div class="movie-card" onclick="openModal(${movie.id})">
+                        ${posterContent}
+                        <div class="movie-info">
+                            <div class="movie-title">${title}</div>
+                            <div class="movie-meta">
+                                <span>${year}</span>
+                                <span class="movie-rating">★ ${rating}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function changeGenre(genreId, btn) {
+            document.querySelectorAll('.genre-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentGenre = genreId;
+            pageToLoad = 1;
+            document.getElementById('searchInput').value = '';
+            loadCatalog(currentGenre, pageToLoad);
+        }
+
+        function openModal(movieId) {
+            const movie = currentMoviesData.find(m => m.id === movieId);
+            if (!movie) return;
+
+            const movieTitle = movie.title || movie.name;
+            const poster = movie.poster_path ? IMG_URL + movie.poster_path : '';
+            const year = (movie.release_date || movie.first_air_date || '2024').split('-')[0];
+            const rating = movie.vote_average ? movie.vote_average.toFixed(1) : '0.0';
+            const desc = movie.overview || 'Описание фильма временно отсутствует.';
+
+            document.getElementById('modalTitle').innerText = movieTitle;
+
+            document.getElementById('modalBody').innerHTML = `
+                <img class="modal-poster" src="${poster}" alt="${movieTitle}" onerror="this.onerror=null; this.src='https://via.placeholder.com/180x270/1f2233/ffffff?text=No+Poster';">
+                <div class="modal-details">
+                    <p><strong>Год:</strong> ${year}</p>
+                    <p><strong>Рейтинг:</strong> ★ ${rating}</p>
+                    <p>${desc}</p>
+                    <a class="watch-btn" href="https://www.google.com/search?q=смотреть+фильм+${encodeURIComponent(movieTitle)}" target="_blank">Смотреть фильм онлайн</a>
+                </div>
+            `;
+
+            document.getElementById('movieModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('movieModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('movieModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        loadCatalog();
+    </script>
+</body>
+</html>
