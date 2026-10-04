@@ -2,16 +2,16 @@ const proxyUrl = 'https://shaxboz-khaki.vercel.app';
 
 function openPlayer(movieId) {
     const modal = document.getElementById('movieModal');
-    const iframe = document.getElementById('playerIframe');
+    const iframe = document.getElementById('playeriframe');
     
-    // Ссылаемся на наш прокси для обхода блокировок
+    // Вставляем ссылку на фильм через твой прокси прямо в плеер на сайте
     iframe.src = `${proxyUrl}/embed/${movieId}`;
-    modal.style.display = 'block';
+    modal.style.display = 'flex';
 }
 
 function closeModal() {
     const modal = document.getElementById('movieModal');
-    const iframe = document.getElementById('playerIframe');
+    const iframe = document.getElementById('playeriframe');
     
     iframe.src = '';
     modal.style.display = 'none';
