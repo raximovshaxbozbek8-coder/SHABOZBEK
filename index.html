@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="google-site-verification" content="fNl9QEdvjZOO-HoHmPcxZNIFtOfWZEE2euZz_bybCu0" />
+    <meta name="google-site-verification" content="fNl9QEdvjZOO-HoHmPcxZNIFtOfWZEE2euZz_bybCu0" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KinoUltra — Watch Movies Online</title>
@@ -170,8 +170,7 @@
         }
     </style>
 
-<script data-cfasync="false" src="https://aarems.org/1/fc63adad21599d5019e3641c3dda462d"></script>
-
+    <script data-cfasync="false" src="https://aarems.org/1/fc63adad21599d5019e3641c3dda462d"></script>
 </head>
 <body>
 
@@ -183,7 +182,6 @@
     </header>
 
     <div class="container">
-        
         <!-- БЛОК РЕКЛАМЫ #1: Верхний баннер -->
         <div class="ad-banner" id="topAdSlot">
             <span>📢 Advertisement Space (728x90) — Place your ad script here</span>
@@ -236,26 +234,25 @@
             `).join('');
         }
 
-    function openInfo(id) {
-    const m = moviesList.find(item => item.id === id);
-    if (!m) return;
+        function openInfo(id) {
+            const m = moviesList.find(item => item.id === id);
+            if (!m) return;
 
-    const poster = m.poster_path ? 'https://image.tmdb.org/t/p/w500' + m.poster_path : '';
-    const title = m.title;
-    const desc = m.overview || "No description available.";
+            const poster = m.poster_path ? 'https://image.tmdb.org/t/p/w500' + m.poster_path : '';
+            const title = m.title;
+            const desc = m.overview || "No description available.";
 
-    document.getElementById('modalBody').innerHTML = `
-        <h2 style="margin-top:0;">${title}</h2>
-        <div class="movie-info-box">
-            <img class="modal-poster" src="${poster}" alt="${title}">
-            <div class="modal-details">
-                <p style="color:#9ca3af; line-height:1.4;">${desc}</p>
-                <button class="play-btn" onclick="startMovie(${m.id}, '${title.replace(/'/g, "")}')">Смотреть фильм</button>
-            </div>
-        </div>
-    `;
-    document.getElementById('modal').style.display = 'flex';
-}
+            document.getElementById('modalBody').innerHTML = `
+                <h2 style="margin-top:0;">${title}</h2>
+                <div class="movie-info-box">
+                    <img class="modal-poster" src="${poster}" alt="${title}">
+                    <div class="modal-details">
+                        <p style="color:#9ca3af; line-height:1.4;">${desc}</p>
+                        <button class="play-btn" onclick="startMovie(${m.id}, '${title.replace(/'/g, "")}')">Смотреть фильм</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal').style.display = 'flex';
         }
 
         function startMovie(id, title) {
@@ -263,13 +260,14 @@
                 <h3 style="margin-top:0; margin-bottom:12px;">${title}</h3>
                 <iframe src="https://vidlink.pro/movie/${id}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
                 
- <!-- БЛОК РЕКЛАМЫ #2: Баннер под видеоплеером -->
-<div class="ad-banner" style="margin-top:15px; margin-bottom:0;">
-    <span>📺 Sponsor Ad / Promo Code Banner (Under Player)</span>
-</div>
-  }
+                <!-- БЛОК РЕКЛАМЫ #2: Баннер под видеоплеером -->
+                <div class="ad-banner" style="margin-top:15px; margin-bottom:0;">
+                    <span>📺 Sponsor Ad / Promo Code Banner (Under Player)</span>
+                </div>
+            `;
+        }
 
-           function closeModal() {
+        function closeModal() {
             document.getElementById('modal').style.display = 'none';
             document.getElementById('modalBody').innerHTML = '';
         }
