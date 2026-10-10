@@ -236,25 +236,26 @@
             `).join('');
         }
 
-        function openInfo(id) {
-            const m = moviesList.find(item => item.id === id);
-            if (!m) return;
+    function openInfo(id) {
+    const m = moviesList.find(item => item.id === id);
+    if (!m) return;
 
-            const poster = m.poster_path ? 'https://image.tmdb.org/t/p/w500' + m.poster_path : 'https://via.placeholder.com/300x450';
-            const title = m.title;
-            const desc = m.overview || "No description available.";
+    const poster = m.poster_path ? 'https://image.tmdb.org/t/p/w500' + m.poster_path : '';
+    const title = m.title;
+    const desc = m.overview || "No description available.";
 
-            document.getElementById('modalBody').innerHTML = `
-                <h2 style="margin-top:0;">${title}</h2>
-                <div class="movie-info-box">
-                    <img class="modal-poster" src="${poster}" alt="${title}">
-                    <div class="modal-details">
-                        <p style="color:#9ca3af; line-height:1.4;">${desc}</p>
-                        <button class="play-btn" onclick="startMovie(${m.id}, '${title.replace(/'/g, "")}')">▶ Watch Movie</button>
-                    </div>
-                </div>
-            `;
-            document.getElementById('modal').style.display = 'flex';
+    document.getElementById('modalBody').innerHTML = `
+        <h2 style="margin-top:0;">${title}</h2>
+        <div class="movie-info-box">
+            <img class="modal-poster" src="${poster}" alt="${title}">
+            <div class="modal-details">
+                <p style="color:#9ca3af; line-height:1.4;">${desc}</p>
+                <button class="play-btn" onclick="startMovie(${m.id}, '${title.replace(/'/g, "")}')">Смотреть фильм</button>
+            </div>
+        </div>
+    `;
+    document.getElementById('modal').style.display = 'flex';
+}
         }
 
         function startMovie(id, title) {
